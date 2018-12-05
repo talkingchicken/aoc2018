@@ -34,7 +34,7 @@ namespace AdventOfCode
             int[,] matrix = new int[1000, 1000];
             int count = 0;
             string line;
-            StreamReader file = new StreamReader("Day3Input.txt");
+            StreamReader file = new StreamReader("input/Day3Input.txt");
             
             while ((line = file.ReadLine()) != null)
             {
@@ -73,7 +73,7 @@ namespace AdventOfCode
             List<Rect> rects = new List<Rect>();
 
             string line;
-            StreamReader file = new StreamReader("Day3Input.txt");
+            StreamReader file = new StreamReader("input/Day3Input.txt");
             
             while ((line = file.ReadLine()) != null)
             {

@@ -12,7 +12,7 @@ namespace AdventOfCode
             int threeCount = 0;
 
             string line;
-            StreamReader file = new StreamReader("Day2Input.txt");
+            StreamReader file = new StreamReader("input/Day2Input.txt");
             
             while ((line = file.ReadLine()) != null)
             {
@@ -70,7 +70,7 @@ namespace AdventOfCode
             {
                 HashSet<string> stringSet = new HashSet<string>();
                 string line;
-                StreamReader file = new StreamReader("Day2Input.txt");
+                StreamReader file = new StreamReader("input/Day2Input.txt");
                 
                 while ((line = file.ReadLine()) != null)
                 {

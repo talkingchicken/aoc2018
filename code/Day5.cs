@@ -41,7 +41,7 @@ namespace AdventOfCode
 
         public static void PartOne()
         {
-            string polymer = ReactPolymer("Day5Input.txt", '0');
+            string polymer = ReactPolymer("input/Day5Input.txt", '0');
 
             Console.WriteLine("There are {0} units remaining", polymer.Length);
         }
@@ -53,7 +53,7 @@ namespace AdventOfCode
 
             for (char counter = 'a'; counter <= 'z'; counter++)
             {
-                string polymer = ReactPolymer("Day5Input.txt", counter);
+                string polymer = ReactPolymer("input/Day5Input.txt", counter);
                 
                 if (polymer.Length < minimumSize)
                 {

@@ -13,7 +13,7 @@ namespace AdventOfCode
             int value = 0;
             string line;
 
-            StreamReader file = new StreamReader("Day1Input.txt");
+            StreamReader file = new StreamReader("input/Day1Input.txt");
 
             while((line = file.ReadLine()) != null)  
             {  
@@ -35,7 +35,7 @@ namespace AdventOfCode
 
             while (true)
             {
-                StreamReader file = new StreamReader("Day1Input.txt");
+                StreamReader file = new StreamReader("input/Day1Input.txt");
 
                 while((line = file.ReadLine()) != null)  
                 {  

@@ -84,7 +84,7 @@ namespace AdventOfCode
 
         public static void PartOne()
         {
-            List<GuardLog> logs = GetLogsFromFile("Day4Input.txt");
+            List<GuardLog> logs = GetLogsFromFile("input/Day4Input.txt");
             Dictionary<int, List<int>> guards = GetGuardSleepRatesFromLogs(logs);
             
             int maxId = -1;
@@ -115,7 +115,7 @@ namespace AdventOfCode
 
         public static void PartTwo()
         {
-            List<GuardLog> logs = GetLogsFromFile("Day4Input.txt");
+            List<GuardLog> logs = GetLogsFromFile("input/Day4Input.txt");
             Dictionary<int, List<int>> guards = GetGuardSleepRatesFromLogs(logs);
 
             int maxId = -1;
