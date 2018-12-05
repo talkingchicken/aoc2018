@@ -16,10 +16,9 @@ namespace AdventOfCode
 			StreamReader file = new StreamReader("input/Day1Input.txt");
 
 			while((line = file.ReadLine()) != null)  
-			{  
-				int modifier = Convert.ToInt32(line);
-				value += modifier;
-			}  
+			{
+				value += Convert.ToInt32(line);
+			}
 
 			file.Close();  
 
@@ -28,9 +27,9 @@ namespace AdventOfCode
 
 		public static void PartTwo()
 		{
-			Dictionary<long, int> dictionary = new Dictionary<long, int>();
+			Dictionary<int, int> dictionary = new Dictionary<int, int>();
 			dictionary.Add(0, 1);
-			long value = 0;
+			int value = 0;
 			string line;
 
 			while (true)
@@ -38,9 +37,8 @@ namespace AdventOfCode
 				StreamReader file = new StreamReader("input/Day1Input.txt");
 
 				while((line = file.ReadLine()) != null)  
-				{  
-					long modifier = Convert.ToInt64(line);
-					value += modifier;
+				{
+					value += Convert.ToInt32(line);
 					if (dictionary.ContainsKey(value))
 					{
 						file.Close();
@@ -51,7 +49,7 @@ namespace AdventOfCode
 					{
 						dictionary.Add(value, 1);
 					}
-				}  
+				}
 
 				file.Close();  
 			}

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace AdventOfCode
 {
@@ -61,7 +62,7 @@ namespace AdventOfCode
 
 					if (!guards.ContainsKey(currentGuardId))
 					{
-						guards[currentGuardId] = new List<int>(new int[61]);
+						guards[currentGuardId] = new List<int>(new int[60]);
 					}
 				}
 				else if (log.value[0] == 'f')
@@ -74,8 +75,6 @@ namespace AdventOfCode
 					{
 						guards[currentGuardId][i]++;
 					}
-
-					guards[currentGuardId][60] += log.date.Minute - startingMinute;
 				}
 			}
 
@@ -93,13 +92,14 @@ namespace AdventOfCode
 
 			foreach (KeyValuePair<int, List<int>> guard in guards)
 			{
-				if (guard.Value[60] > maxMinutes)
+				int totalSleepMinutes = guard.Value.Sum();
+				if (totalSleepMinutes > maxMinutes)
 				{
-					maxMinutes = guard.Value[60];
+					maxMinutes = totalSleepMinutes;
 					maxId = guard.Key;
 					int minuteValue = guard.Value[0];
 
-					for (int i = 1; i < 60; i++)
+					for (int i = 1; i < guard.Value.Count; i++)
 					{
 						if (guard.Value[i] > minuteValue)
 						{
