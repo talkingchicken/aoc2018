@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace AdventOfCode
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            DayFive.PartTwo();
-        }
-    }
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			DayFive.PartTwo();
+		}
+	}
 }
