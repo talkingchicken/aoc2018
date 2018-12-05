@@ -45,10 +45,27 @@
 		"prefix": "aocfile",
 		"body": [
 			"string line;",
-			"StreamReader file = new StreamReader(\"${1:inputFilename}.txt\");",
+			"StreamReader file = new StreamReader(\"input/${1:inputFilename}.txt\");",
 			"",
 			"while ((line = file.ReadLine()) != null)",
 			"{",
+			"\t$0",
+			"}",
+			"",
+			"file.Close();"
+		]
+	},
+
+	"Quick snippet to read a file char by char": {
+		"prefix": "aocchar",
+		"body": [
+			"char currentChar;",
+			"StreamReader file = new StreamReader(\"input/${1:inputFilename}.txt\");",
+			"",
+			"while ((file.Peek() >= 0))",
+			"{",
+			"\tcurrentChar = (char)file.Read();",
+			"\t",
 			"\t$0",
 			"}",
 			"",
