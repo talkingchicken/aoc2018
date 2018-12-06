@@ -20,6 +20,11 @@ namespace AdventOfCode
 			}
 		}
 
+		private static List<int> CalculateDistances(List<Tuple<int, int>> points, Tuple<int, int> point)
+		{
+			return new List<int>(points.Select(x => Math.Abs(x.Item1 - point.Item1) + Math.Abs(x.Item2 - point.Item2)));
+		}
+
 		private static List<Tuple<int, int>> GetPointsList()
 		{
 			List<Tuple<int, int>> points = new List<Tuple<int, int>>();
@@ -42,56 +47,8 @@ namespace AdventOfCode
 		{
 			List<Tuple<int, int>> points = GetPointsList();
 
-			int maximumSize = -1;
-
-			for (int i = 0; i < points.Count; i++)
-			{
-				HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
-
-				int size = CalculatePart1Area(points, points[i], i);
-				maximumSize = Math.Max(maximumSize, size);
-			}
-
+			int maximumSize = points.Select(x => CalculatePart1Area(points, x, points.IndexOf(x))).Max();
 			Console.WriteLine("Maximum non-infinite size is {0}", maximumSize);
-		}
-
-		public static void PartTwo()
-		{
-			List<Tuple<int, int>> points = GetPointsList();
-
-			Tuple<int, int> startingPoint = new Tuple<int, int>((int)points.Select(x => x.Item1).Average(), (int)points.Select(x => x.Item2).Average());
-
-			Console.WriteLine("Maximum size is {0}", CalculatePart2Area(points, startingPoint.Item1, startingPoint.Item2));
-		}
-
-		private static int CalculatePart2Area(List<Tuple<int, int>> points, int x, int y)
-		{
-			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
-			Queue<Tuple<int, int>> pointQueue = new Queue<Tuple<int, int>>();
-			
-			var startPoint = new Tuple<int, int>(x, y);
-
-			pointQueue.Enqueue(startPoint);
-
-			while (pointQueue.Count > 0)
-			{
-				Tuple<int, int> point = pointQueue.Dequeue();
-
-				if (coordMap.Contains(point))
-					continue;
-
-				if (CalculateDistances(points, point).Sum() >= 10000)
-					continue;
-
-				coordMap.Add(point);
-				
-				pointQueue.Enqueue(new Tuple<int, int>(point.Item1 - 1, point.Item2));
-				pointQueue.Enqueue(new Tuple<int, int>(point.Item1 + 1, point.Item2));
-				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 - 1));
-				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 + 1));
-			}
-
-			return coordMap.Count;
 		}
 
 		private static int CalculatePart1Area(List<Tuple<int, int>> points, Tuple<int, int> startingPoint, int index)
@@ -134,10 +91,43 @@ namespace AdventOfCode
 
 			return coordMap.Count;
 		}
-
-		private static List<int> CalculateDistances(List<Tuple<int, int>> points, Tuple<int, int> point)
+		public static void PartTwo()
 		{
-			return new List<int>(points.Select(x => Math.Abs(x.Item1 - point.Item1) + Math.Abs(x.Item2 - point.Item2)));
+			List<Tuple<int, int>> points = GetPointsList();
+
+			Tuple<int, int> startingPoint = new Tuple<int, int>((int)points.Select(x => x.Item1).Average(), (int)points.Select(x => x.Item2).Average());
+
+			Console.WriteLine("Maximum size is {0}", CalculatePart2Area(points, startingPoint.Item1, startingPoint.Item2));
+		}
+
+		private static int CalculatePart2Area(List<Tuple<int, int>> points, int x, int y)
+		{
+			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
+			Queue<Tuple<int, int>> pointQueue = new Queue<Tuple<int, int>>();
+			
+			var startPoint = new Tuple<int, int>(x, y);
+
+			pointQueue.Enqueue(startPoint);
+
+			while (pointQueue.Count > 0)
+			{
+				Tuple<int, int> point = pointQueue.Dequeue();
+
+				if (coordMap.Contains(point))
+					continue;
+
+				if (CalculateDistances(points, point).Sum() >= 10000)
+					continue;
+
+				coordMap.Add(point);
+				
+				pointQueue.Enqueue(new Tuple<int, int>(point.Item1 - 1, point.Item2));
+				pointQueue.Enqueue(new Tuple<int, int>(point.Item1 + 1, point.Item2));
+				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 - 1));
+				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 + 1));
+			}
+
+			return coordMap.Count;
 		}
 	}
 }
