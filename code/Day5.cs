@@ -11,9 +11,9 @@ namespace AdventOfCode
 			return firstChar != secondChar && char.ToUpper(firstChar) == char.ToUpper(secondChar);
 		}
 		
-		private static string ReactPolymer(string filename, char charToIgnore)
+		private static Stack<char> ReactPolymer(string filename, char charToIgnore)
 		{
-			string polymer = "";
+			Stack<char> polymer = new Stack<char>();
 
 			char currentChar;
 			StreamReader file = new StreamReader(filename);
@@ -25,13 +25,13 @@ namespace AdventOfCode
 				if (char.ToUpper(currentChar) == char.ToUpper(charToIgnore))
 					continue;
 
-				if (polymer.Length > 0 && CheckForReaction(currentChar, polymer[polymer.Length - 1]))
+				if (polymer.Count > 0 && CheckForReaction(currentChar, polymer.Peek()))
 				{
-					polymer = polymer.Substring(0, polymer.Length - 1);
+					polymer.Pop();
 				}
 				else
 				{
-					polymer += currentChar;
+					polymer.Push(currentChar);
 				}
 			}
 			file.Close();
@@ -41,9 +41,9 @@ namespace AdventOfCode
 
 		public static void PartOne()
 		{
-			string polymer = ReactPolymer("input/Day5Input.txt", '0');
+			Stack<char> polymer = ReactPolymer("input/Day5Input.txt", '0');
 
-			Console.WriteLine("There are {0} units remaining", polymer.Length);
+			Console.WriteLine("There are {0} units remaining", polymer.Count);
 		}
 
 		public static void PartTwo()
@@ -53,11 +53,11 @@ namespace AdventOfCode
 
 			for (char counter = 'a'; counter <= 'z'; counter++)
 			{
-				string polymer = ReactPolymer("input/Day5Input.txt", counter);
+				Stack<char> polymer = ReactPolymer("input/Day5Input.txt", counter);
 				
-				if (polymer.Length < minimumSize)
+				if (polymer.Count < minimumSize)
 				{
-					minimumSize = polymer.Length;
+					minimumSize = polymer.Count;
 					shortestChar = counter;
 				}
 			}
