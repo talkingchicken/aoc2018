@@ -28,20 +28,7 @@ namespace AdventOfCode
 	{
 		private static List<GuardLog> GetLogsFromFile(string filename)
 		{
-			string line;
-			StreamReader file = new StreamReader(filename);
-			
-			List<GuardLog> logs = new List<GuardLog>();
-
-			while ((line = file.ReadLine()) != null)
-			{
-				DateTime currentDate = DateTime.ParseExact(line.Substring(0, 18), "[yyyy-MM-dd HH:mm]", CultureInfo.InvariantCulture);
-				string logValue = line.Substring(19);
-
-				logs.Add(new GuardLog(currentDate, logValue));
-			}
-			
-			file.Close();
+			List<GuardLog> logs = new List<GuardLog>(Utils.GetLinesFromFile(filename).Select(x => new GuardLog(DateTime.ParseExact(x.Substring(0, 18), "[yyyy-MM-dd HH:mm]", CultureInfo.InvariantCulture), x.Substring(19))));
 
 			logs.Sort();
 			return logs;

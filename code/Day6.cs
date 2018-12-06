@@ -27,20 +27,11 @@ namespace AdventOfCode
 
 		private static List<Tuple<int, int>> GetPointsList()
 		{
-			List<Tuple<int, int>> points = new List<Tuple<int, int>>();
-			string line;
-			StreamReader file = new StreamReader("input/Day6Input.txt");
-			
-			while ((line = file.ReadLine()) != null)
-			{
-				string[] pointStr = line.Split(", ");
-				Tuple<int, int> point = new Tuple<int, int>(Convert.ToInt32(pointStr[0]), Convert.ToInt32(pointStr[1]));
-				points.Add(point);
-			}
-			
-			file.Close();
-
-			return points;
+			return new List<Tuple<int, int>>(Utils.GetLinesFromFile("input/Day6Input.txt").Select(x =>
+			{ 
+				string[] split = x.Split(", ");
+				return new Tuple<int, int>(Convert.ToInt32(split[0]), Convert.ToInt32(split[1]));
+			}));
 		}
 
 		public static void PartOne()
