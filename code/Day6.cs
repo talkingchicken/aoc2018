@@ -48,7 +48,7 @@ namespace AdventOfCode
 			{
 				HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 
-				int size = CalculateArea(points, points[i], i);
+				int size = CalculatePart1Area(points, points[i], i);
 				maximumSize = Math.Max(maximumSize, size);
 			}
 
@@ -61,10 +61,10 @@ namespace AdventOfCode
 
 			Tuple<int, int> startingPoint = new Tuple<int, int>((int)points.Select(x => x.Item1).Average(), (int)points.Select(x => x.Item2).Average());
 
-			Console.WriteLine("Maximum size is {0}", CalculateNearbyArea(points, startingPoint.Item1, startingPoint.Item2));
+			Console.WriteLine("Maximum size is {0}", CalculatePart2Area(points, startingPoint.Item1, startingPoint.Item2));
 		}
 
-		private static int CalculateNearbyArea(List<Tuple<int, int>> points, int x, int y)
+		private static int CalculatePart2Area(List<Tuple<int, int>> points, int x, int y)
 		{
 			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 			Queue<Tuple<int, int>> pointQueue = new Queue<Tuple<int, int>>();
@@ -94,7 +94,7 @@ namespace AdventOfCode
 			return coordMap.Count;
 		}
 
-		private static int CalculateArea(List<Tuple<int, int>> points, Tuple<int, int> startingPoint, int index)
+		private static int CalculatePart1Area(List<Tuple<int, int>> points, Tuple<int, int> startingPoint, int index)
 		{
 			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 			Queue<PointDist> pointQueue = new Queue<PointDist>();
