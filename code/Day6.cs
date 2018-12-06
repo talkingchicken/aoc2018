@@ -7,6 +7,19 @@ namespace AdventOfCode
 {
 	class DaySix
 	{
+		class PointDist
+		{
+			public int x { get; set; }
+			public int y { get; set; }
+			public int prevDist { get; set; }
+			public PointDist(int xParam, int yParam, int prevDistParam)
+			{
+				x = xParam;
+				y = yParam;
+				prevDist = prevDistParam;
+			}
+		}
+
 		private static List<Tuple<int, int>> GetPointsList()
 		{
 			List<Tuple<int, int>> points = new List<Tuple<int, int>>();
@@ -35,11 +48,8 @@ namespace AdventOfCode
 			{
 				HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 
-				if (CalculateArea(coordMap, points, points[i], i, CalculateDistances(points, points[i]).Sum()))
-				{
-					int size = coordMap.Count;
-					maximumSize = Math.Max(maximumSize, size);
-				}
+				int size = CalculateArea(points, points[i], i);
+				maximumSize = Math.Max(maximumSize, size);
 			}
 
 			Console.WriteLine("Maximum non-infinite size is {0}", maximumSize);
@@ -50,15 +60,13 @@ namespace AdventOfCode
 			List<Tuple<int, int>> points = GetPointsList();
 
 			Tuple<int, int> startingPoint = new Tuple<int, int>((int)points.Select(x => x.Item1).Average(), (int)points.Select(x => x.Item2).Average());
-			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 
-			CalculateNearbyArea(coordMap, points, startingPoint.Item1, startingPoint.Item2);
-
-			Console.WriteLine("Maximum size is {0}", coordMap.Count);
+			Console.WriteLine("Maximum size is {0}", CalculateNearbyArea(points, startingPoint.Item1, startingPoint.Item2));
 		}
 
-		private static void CalculateNearbyArea(HashSet<Tuple<int, int>> coordMap, List<Tuple<int, int>> points, int x, int y)
+		private static int CalculateNearbyArea(List<Tuple<int, int>> points, int x, int y)
 		{
+			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 			Queue<Tuple<int, int>> pointQueue = new Queue<Tuple<int, int>>();
 			
 			var startPoint = new Tuple<int, int>(x, y);
@@ -82,48 +90,54 @@ namespace AdventOfCode
 				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 - 1));
 				pointQueue.Enqueue(new Tuple<int, int>(point.Item1, point.Item2 + 1));
 			}
+
+			return coordMap.Count;
 		}
 
-		private static bool CalculateArea(HashSet<Tuple<int, int>> coordMap, List<Tuple<int, int>> points, Tuple<int, int> currentPoint, int index, int previousTotalDistance)
+		private static int CalculateArea(List<Tuple<int, int>> points, Tuple<int, int> startingPoint, int index)
 		{
-			if (coordMap.Contains(currentPoint))
+			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
+			Queue<PointDist> pointQueue = new Queue<PointDist>();
+
+			pointQueue.Enqueue(new PointDist(startingPoint.Item1, startingPoint.Item2, CalculateDistances(points, startingPoint).Sum()));
+
+			while (pointQueue.Count > 0)
 			{
-				return true;
+				PointDist currentPointDist = pointQueue.Dequeue();
+
+				Tuple<int, int> point = new Tuple<int, int>(currentPointDist.x, currentPointDist.y);
+
+				if (coordMap.Contains(point))
+				{
+					continue;
+				}
+
+				List<int> distances = CalculateDistances(points, point);
+				int totalDistance = distances.Sum();
+				if (totalDistance - currentPointDist.prevDist == distances.Count)
+				{
+					return -1;
+				}
+
+				int minimum = distances.Min();
+
+				if (distances[index] == minimum && distances.Where(x => x.Equals(minimum)).Count() == 1)
+				{
+					coordMap.Add(point);
+					
+					pointQueue.Enqueue(new PointDist(currentPointDist.x + 1, currentPointDist.y, totalDistance));
+					pointQueue.Enqueue(new PointDist(currentPointDist.x - 1, currentPointDist.y, totalDistance));
+					pointQueue.Enqueue(new PointDist(currentPointDist.x, currentPointDist.y - 1, totalDistance));
+					pointQueue.Enqueue(new PointDist(currentPointDist.x, currentPointDist.y + 1, totalDistance));
+				}
 			}
 
-			List<int> distances = CalculateDistances(points, currentPoint);
-			int totalDistance = distances.Sum();
-			if (totalDistance - previousTotalDistance == distances.Count)
-			{
-				return false;
-			}
-
-			int minimum = distances.Min();
-
-			if (distances[index] == minimum && distances.Where(x => x.Equals(minimum)).Count() == 1)
-			{
-				coordMap.Add(currentPoint);
-				return CalculateArea(coordMap, points, new Tuple<int, int>(currentPoint.Item1 - 1, currentPoint.Item2), index, totalDistance)
-					&& CalculateArea(coordMap, points, new Tuple<int, int>(currentPoint.Item1 + 1, currentPoint.Item2), index, totalDistance)
-					&& CalculateArea(coordMap, points, new Tuple<int, int>(currentPoint.Item1, currentPoint.Item2 - 1), index, totalDistance)
-					&& CalculateArea(coordMap, points, new Tuple<int, int>(currentPoint.Item1, currentPoint.Item2 + 1), index, totalDistance);
-			}
-			else
-			{
-				return true;
-			}
+			return coordMap.Count;
 		}
 
 		private static List<int> CalculateDistances(List<Tuple<int, int>> points, Tuple<int, int> point)
 		{
-			List<int> returnValue = new List<int>();
-
-			foreach (Tuple<int, int> currentPoint in points)
-			{
-				returnValue.Add((Math.Abs(currentPoint.Item1 - point.Item1) + Math.Abs(currentPoint.Item2 - point.Item2)));
-			}
-
-			return returnValue;
+			return new List<int>(points.Select(x => Math.Abs(x.Item1 - point.Item1) + Math.Abs(x.Item2 - point.Item2)));
 		}
 	}
 }
