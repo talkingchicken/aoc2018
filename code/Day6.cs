@@ -88,17 +88,15 @@ namespace AdventOfCode
 
 			Tuple<int, int> startingPoint = new Tuple<int, int>((int)points.Select(x => x.Item1).Average(), (int)points.Select(x => x.Item2).Average());
 
-			Console.WriteLine("Maximum size is {0}", CalculatePart2Area(points, startingPoint.Item1, startingPoint.Item2));
+			Console.WriteLine("Maximum size is {0}", CalculatePart2Area(points, startingPoint));
 		}
 
-		private static int CalculatePart2Area(List<Tuple<int, int>> points, int x, int y)
+		private static int CalculatePart2Area(List<Tuple<int, int>> points, Tuple<int, int> startingPoint)
 		{
 			HashSet<Tuple<int, int>> coordMap = new HashSet<Tuple<int, int>>();
 			Queue<Tuple<int, int>> pointQueue = new Queue<Tuple<int, int>>();
-			
-			var startPoint = new Tuple<int, int>(x, y);
 
-			pointQueue.Enqueue(startPoint);
+			pointQueue.Enqueue(startingPoint);
 
 			while (pointQueue.Count > 0)
 			{
