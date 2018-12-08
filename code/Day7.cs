@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace AdventOfCode
 {
-
     class GraphNode
     {
         public HashSet<char> dependencies { get; set; }
@@ -62,7 +61,6 @@ namespace AdventOfCode
                 }
             }
             
-
             string result = "";
 
             while (queue.Count > 0)
@@ -159,7 +157,6 @@ namespace AdventOfCode
             do
             {
                 counter++;
-
 
                 foreach (Worker worker in workers)
                 {
