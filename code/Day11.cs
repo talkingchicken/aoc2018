@@ -62,23 +62,21 @@ namespace AdventOfCode
 
 		public static void PartTwo()
 		{
-			Dictionary<Tuple<int, int, int>, int> totals = new Dictionary<Tuple<int, int, int>, int>();
+			Dictionary<long, int> totals = new Dictionary<long, int>();
 
 			int input = 4172;
 
-			for (int i = 0; i < 300; i++)
+			for (int x = 1; x <= 300; x++)
 			{
-				for (int j = 0; j < 300; j++)
+				for (int y = 1; y <= 300; y++)
 				{
-					int x = i + 1;
-					int y = j + 1;
 					int id = x + 10;
 					int power = id * y;
 					power += input;
 					power *= id;
 					power = (power / 100) % 10;
 					power -= 5;
-					totals[new Tuple<int, int, int>(x, y, 1)] = power;
+					totals[GetKey(x, y, 1)] = power;
 				}
 			}
 
@@ -93,17 +91,25 @@ namespace AdventOfCode
 				{
 					for (int y = 1; y < 300 - size + 1; y++)
 					{
-						Tuple<int, int, int> location = new Tuple<int, int, int>(x, y, size);
+						long key = GetKey(x, y, size);
 
-						totals[location] = 	totals[new Tuple<int, int, int>(x, y, size - 1)] +
-											totals[new Tuple<int, int, int>(x + 1, y, size - 1)] +
-											totals[new Tuple<int, int, int>(x, y + 1, size - 1)] +
-											totals[new Tuple<int, int, int>(x + 1, y + 1, size - 1)] -
-											(size > 2 ? totals[new Tuple<int, int, int>(x + 1, y + 1, size - 2)] * 4 : 0);
+						int extraTotal = 0;
 
-						if (totals[location] > maximum)
+						for (int i = x; i < x + size; i++)
 						{
-							maximum = totals[location];
+							extraTotal += totals[GetKey(i, y, 1)];
+						}
+
+						for (int i = y + 1; i < y + size; i++)
+						{
+							extraTotal += totals[GetKey(x, i, 1)];
+						}
+
+						totals[key] = totals[GetKey(x + 1, y + 1, size - 1)] + extraTotal;
+
+						if (totals[key] > maximum)
+						{
+							maximum = totals[key];
 							maxX = x;
 							maxY = y;
 							maxSize = size;
@@ -114,5 +120,10 @@ namespace AdventOfCode
 
 			Console.WriteLine("Max coords are {0},{1},{2}", maxX, maxY, maxSize);
 		}
+		private static long GetKey(int x, int y, int size)
+		{
+			return x * 1000000 + y * 1000 + size;
+		}
 	}
+
 }
