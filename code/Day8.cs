@@ -21,7 +21,7 @@ namespace AdventOfCode
 			return metadata.Sum() + childNodes.Select(x => x.Total()).Sum();
 		}
 
-		public int PartTwoTotal()
+		public int Value()
 		{
 			if (childNodes.Count == 0)
 			{
@@ -34,7 +34,7 @@ namespace AdventOfCode
 				{
 					if ((index - 1) >= 0 && (index - 1) < childNodes.Count)
 					{
-						total += childNodes[index - 1].PartTwoTotal();
+						total += childNodes[index - 1].Value();
 					}
 				}
 				return total;
@@ -96,7 +96,7 @@ namespace AdventOfCode
 				
 				TreeNode root = ParseTreeNode(nodes, ref index);
 				
-				Console.WriteLine("Total is {0}", root.PartTwoTotal());
+				Console.WriteLine("Total is {0}", root.Value());
 			}
 			
 			file.Close();
