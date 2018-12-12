@@ -93,19 +93,11 @@ namespace AdventOfCode
 					{
 						long key = GetKey(x, y, size);
 
-						int extraTotal = 0;
-
-						for (int i = x; i < x + size; i++)
-						{
-							extraTotal += totals[GetKey(i, y, 1)];
-						}
-
-						for (int i = y + 1; i < y + size; i++)
-						{
-							extraTotal += totals[GetKey(x, i, 1)];
-						}
-
-						totals[key] = totals[GetKey(x + 1, y + 1, size - 1)] + extraTotal;
+						totals[key] = 	totals[GetKey(x, y, size - 1)] +
+										totals[GetKey(x + 1, y + 1, size - 1)] +
+										totals[GetKey(x + size - 1, y, 1)] +
+										totals[GetKey(x, y + size - 1, 1)] -
+										(size > 2 ? totals[GetKey(x + 1, y + 1, size - 2)] : 0);
 
 						if (totals[key] > maximum)
 						{
