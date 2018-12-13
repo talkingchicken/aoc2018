@@ -22,18 +22,14 @@ namespace AdventOfCode
 
 	class Car : IComparable
 	{
-		public int id { get; }
 		public int x {get; private set;}
 		public int y {get; private set;}
-
 		public bool dead { get; set; }
 		public Direction direction {get; private set;}
-
 		public TurnState turnState {get; private set;}
 
-		public Car(int idParam, int xParam, int yParam, Direction directionParam)
+		public Car(int xParam, int yParam, Direction directionParam)
 		{
-			id = idParam;
 			x = xParam;
 			y = yParam;
 			direction = directionParam;
@@ -191,8 +187,6 @@ namespace AdventOfCode
 
 			List<string> lines = Utils.GetLinesFromFile("input/Day13Input.txt");
 
-			int currentId = 0;
-
 			for(int y = 0; y < lines.Count; y++)
 			{
 				string line = lines[y];
@@ -203,19 +197,19 @@ namespace AdventOfCode
 					{
 						case '^':
 							grid[y, x] = '|';
-							cars.Add(new Car(currentId++, x, y, Direction.Up));
+							cars.Add(new Car(x, y, Direction.Up));
 							break;
 						case 'v':
 							grid[y, x] = '|';
-							cars.Add(new Car(currentId++, x, y, Direction.Down));
+							cars.Add(new Car(x, y, Direction.Down));
 							break;
 						case '<':
 							grid[y, x] = '-';
-							cars.Add(new Car(currentId++, x, y, Direction.Left));
+							cars.Add(new Car(x, y, Direction.Left));
 							break;
 						case '>':
 							grid[y, x] = '-';
-							cars.Add(new Car(currentId++, x, y, Direction.Right));
+							cars.Add(new Car(x, y, Direction.Right));
 							break;
 						default:
 							grid[y, x] = letter;
@@ -231,9 +225,9 @@ namespace AdventOfCode
 				{
 					car.Move(grid);
 
-					foreach (Car otherCar in cars)
+					foreach (Car otherCar in cars.Where(x => car != x))
 					{
-						if (car.x == otherCar.x && car.y == otherCar.y && car.id != otherCar.id)
+						if (car.x == otherCar.x && car.y == otherCar.y)
 						{
 							Console.WriteLine("Collision at {0},{1}", car.x, car.y);
 							return;
@@ -251,8 +245,6 @@ namespace AdventOfCode
 
 			List<string> lines = Utils.GetLinesFromFile("input/Day13Input.txt");
 
-			int currentId = 0;
-
 			for(int y = 0; y < lines.Count; y++)
 			{
 				string line = lines[y];
@@ -263,19 +255,19 @@ namespace AdventOfCode
 					{
 						case '^':
 							grid[y, x] = '|';
-							cars.Add(new Car(currentId++, x, y, Direction.Up));
+							cars.Add(new Car(x, y, Direction.Up));
 							break;
 						case 'v':
 							grid[y, x] = '|';
-							cars.Add(new Car(currentId++, x, y, Direction.Down));
+							cars.Add(new Car(x, y, Direction.Down));
 							break;
 						case '<':
 							grid[y, x] = '-';
-							cars.Add(new Car(currentId++, x, y, Direction.Left));
+							cars.Add(new Car(x, y, Direction.Left));
 							break;
 						case '>':
 							grid[y, x] = '-';
-							cars.Add(new Car(currentId++, x, y, Direction.Right));
+							cars.Add(new Car(x, y, Direction.Right));
 							break;
 						default:
 							grid[y, x] = letter;
@@ -284,22 +276,21 @@ namespace AdventOfCode
 				}
 			}
 
+			int iterations = 0;
 			while (true)
 			{
+				iterations++;
 				cars.Sort();
-				foreach (Car car in cars)
+				foreach (Car car in cars.Where(x=> !x.dead))
 				{
-					if (!car.dead)
-					{
-						car.Move(grid);
+					car.Move(grid);
 
-						foreach (Car otherCar in cars)
+					foreach (Car otherCar in cars.Where(x => car != x && !x.dead))
+					{
+						if (car.x == otherCar.x && car.y == otherCar.y)
 						{
-							if (!otherCar.dead && car.x == otherCar.x && car.y == otherCar.y && car.id != otherCar.id)
-							{
-								car.dead = true;
-								otherCar.dead = true;
-							}
+							car.dead = true;
+							otherCar.dead = true;
 						}
 					}
 				}
@@ -308,6 +299,7 @@ namespace AdventOfCode
 				if (remainingCars.Count() == 1)
 				{
 					Console.WriteLine("Last remaining car is at {0},{1}", remainingCars.ElementAt(0).x, remainingCars.ElementAt(0).y);
+					Console.WriteLine("{0} iterations", iterations);
 					return;
 				}
 			}
