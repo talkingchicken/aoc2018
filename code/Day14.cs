@@ -44,7 +44,7 @@ namespace AdventOfCode
 
 		public static void PartTwo()
 		{
-			int[] input = {3,3,0,1,2,1};
+			List<int> input = new List<int>{3,3,0,1,2,1};
 
 			int firstIndex = 0;
 			int secondIndex = 1;
@@ -68,36 +68,21 @@ namespace AdventOfCode
 				firstIndex = (firstIndex + recipes[firstIndex] + 1) % recipes.Count;
 				secondIndex = (secondIndex + recipes[secondIndex] + 1) % recipes.Count;
 
-				if (recipes.Count > input.Length)
+				if (recipes.Count > input.Count)
 				{
-					int count;
-					for(count = 0; count < input.Length; count++)
+					IEnumerable<int> subList = recipes.Skip(recipes.Count - input.Count).Take(input.Count);
+					if (subList.SequenceEqual(input))
 					{
-						if (recipes[recipes.Count - input.Length + count] != input[count])
-						{
-							break;
-						}
-					}
-
-					if (count == input.Length)
-					{
-						Console.WriteLine("Sequence appears after {0} recipes", recipes.Count - input.Length);
+						Console.WriteLine("Sequence appears after {0} recipes", recipes.Count - input.Count);
 						return;
 					}
 
-					if (total > 10 && recipes.Count - 1 > input.Length)
+					if (total > 10 && recipes.Count - 1 > input.Count)
 					{
-						for(count = 0; count < input.Length; count++)
+						subList = recipes.Skip(recipes.Count - input.Count - 1).Take(input.Count);
+						if (subList.SequenceEqual(input))
 						{
-							if (recipes[recipes.Count - 1 - input.Length + count] != input[count])
-							{
-								break;
-							}
-						}
-
-						if (count == input.Length)
-						{
-							Console.WriteLine("Sequence appears after {0} recipes", recipes.Count - input.Length - 1);
+							Console.WriteLine("Sequence appears after {0} recipes", recipes.Count - input.Count - 1);
 							return;
 						}
 					}
