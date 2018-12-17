@@ -9,8 +9,8 @@ namespace AdventOfCode
 	{
 		None = 0,
 		Clay = 1,
-		NonstagnantWater = 2,
-		StagnantWater = 3,
+		UnsettledWater = 2,
+		SettledWater = 3,
 	}
 	class DaySeventeen
 	{
@@ -69,7 +69,7 @@ namespace AdventOfCode
 			{
 				SetAt(grid, item.Item1 - minX, item.Item2, GridContents.Clay);
 			}
-			
+
 			FillWithWaterFrom(grid, 500 - minX, minY - 1);
 
 			int total = 0;
@@ -83,10 +83,10 @@ namespace AdventOfCode
 							break;
 						case GridContents.Clay:
 							break;
-						case GridContents.NonstagnantWater:
+						case GridContents.UnsettledWater:
 							total++;
 							break;
-						case GridContents.StagnantWater:
+						case GridContents.SettledWater:
 							total++;
 							break;
 					}
@@ -111,10 +111,10 @@ namespace AdventOfCode
 						case GridContents.Clay:
 							currentChar = '#';
 							break;
-						case GridContents.NonstagnantWater:
+						case GridContents.UnsettledWater:
 							currentChar = '|';
 							break;
-						case GridContents.StagnantWater:
+						case GridContents.SettledWater:
 							currentChar = '~';
 							break;
 					}
@@ -131,8 +131,8 @@ namespace AdventOfCode
 			{
 				bool wallsOnBothSides = true;
 
-				SetAt(grid, x, currentY, GridContents.NonstagnantWater);
-				if (currentY == grid.GetLength(0) - 1 || GetAt(grid, x, currentY + 1) == GridContents.NonstagnantWater)
+				SetAt(grid, x, currentY, GridContents.UnsettledWater);
+				if (currentY == grid.GetLength(0) - 1 || GetAt(grid, x, currentY + 1) == GridContents.UnsettledWater)
 				{
 					continue;
 				}
@@ -151,19 +151,14 @@ namespace AdventOfCode
 						leftWall = currentX;
 						break;
 					}
-					else if (contents == GridContents.NonstagnantWater)
-					{
-						wallsOnBothSides = false;
-						break;
-					}
 					else
 					{
-						SetAt(grid, currentX, currentY, GridContents.NonstagnantWater);
+						SetAt(grid, currentX, currentY, GridContents.UnsettledWater);
 
 						if (GetAt(grid, currentX, currentY + 1) == GridContents.None)
 						{
 							FillWithWaterFrom(grid, currentX, currentY);
-							if (GetAt(grid, currentX, currentY + 1) == GridContents.NonstagnantWater)
+							if (GetAt(grid, currentX, currentY + 1) == GridContents.UnsettledWater)
 							{
 								wallsOnBothSides = false;
 								break;
@@ -185,19 +180,14 @@ namespace AdventOfCode
 						rightWall = currentX;
 						break;
 					}
-					else if (contents == GridContents.NonstagnantWater)
-					{
-						wallsOnBothSides = false;
-						break;
-					}
 					else
 					{
-						SetAt(grid, currentX, currentY, GridContents.NonstagnantWater);
+						SetAt(grid, currentX, currentY, GridContents.UnsettledWater);
 
 						if (GetAt(grid, currentX, currentY + 1) == GridContents.None)
 						{
 							FillWithWaterFrom(grid, currentX, currentY);
-							if (GetAt(grid, currentX, currentY + 1) == GridContents.NonstagnantWater)
+							if (GetAt(grid, currentX, currentY + 1) == GridContents.UnsettledWater)
 							{
 								wallsOnBothSides = false;
 								break;
@@ -210,7 +200,7 @@ namespace AdventOfCode
 				{
 					for (currentX = leftWall + 1; currentX < rightWall; currentX++)
 					{
-						SetAt(grid, currentX, currentY, GridContents.StagnantWater);
+						SetAt(grid, currentX, currentY, GridContents.SettledWater);
 					}
 				}
 			}
@@ -285,9 +275,9 @@ namespace AdventOfCode
 							break;
 						case GridContents.Clay:
 							break;
-						case GridContents.NonstagnantWater:
+						case GridContents.UnsettledWater:
 							break;
-						case GridContents.StagnantWater:
+						case GridContents.SettledWater:
 							total++;
 							break;
 					}
