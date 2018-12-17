@@ -22,21 +22,10 @@ namespace AdventOfCode
 			return grid[y, x];
 		}
 
-		public static void SetClayAt(GridContents[,] grid, int x, int y, int minX)
+		public static void SetAt(GridContents[,] grid, int x, int y, GridContents value)
 		{
-			grid[y, x - minX] = GridContents.Clay;
+			grid[y, x] = value;
 		}
-
-		public static void SetWaterAt(GridContents[,] grid, int x, int y)
-		{
-			grid[y, x] = GridContents.NonstagnantWater;
-		}
-
-		public static void SetStagnantAt(GridContents[,] grid, int x, int y)
-		{
-			grid[y, x] = GridContents.StagnantWater;
-		}
-
 
 		public static void PartOne()
 		{
@@ -78,13 +67,10 @@ namespace AdventOfCode
 
 			foreach (Tuple<int, int> item in clay)
 			{
-				SetClayAt(grid, item.Item1, item.Item2, minX);
+				SetAt(grid, item.Item1 - minX, item.Item2, GridContents.Clay);
 			}
-
-
-			//PrintGrid(grid);
-
-			CalculateWaterFrom(grid, 500 - minX, minY - 1);
+			
+			FillWithWaterFrom(grid, 500 - minX, minY - 1);
 
 			int total = 0;
 			for (int currentY = 0; currentY < grid.GetLength(0); currentY++)
@@ -139,24 +125,13 @@ namespace AdventOfCode
 				Console.WriteLine();
 			}
 		}
-		public static int CalculateWaterFrom(GridContents[,] grid, int x, int y)
+		public static void FillWithWaterFrom(GridContents[,] grid, int x, int y)
 		{
-			//PrintGrid(grid);
-			int total = 0;
-
-			int currentY = findFloor(grid, x, y);
-
-			if (currentY == -1)
-			{
-				return grid.GetLength(0) - y - 1;
-			}
-
-			for(; currentY > y; currentY--)
+			for(int currentY = findFloor(grid, x, y); currentY > y; currentY--)
 			{
 				bool wallsOnBothSides = true;
 
-				total++;
-				SetWaterAt(grid, x, currentY);
+				SetAt(grid, x, currentY, GridContents.NonstagnantWater);
 				if (currentY == grid.GetLength(0) - 1 || GetAt(grid, x, currentY + 1) == GridContents.NonstagnantWater)
 				{
 					continue;
@@ -183,12 +158,11 @@ namespace AdventOfCode
 					}
 					else
 					{
-						total++;
-						SetWaterAt(grid, currentX, currentY);
+						SetAt(grid, currentX, currentY, GridContents.NonstagnantWater);
 
 						if (GetAt(grid, currentX, currentY + 1) == GridContents.None)
 						{
-							total += CalculateWaterFrom(grid, currentX, currentY);
+							FillWithWaterFrom(grid, currentX, currentY);
 							if (GetAt(grid, currentX, currentY + 1) == GridContents.NonstagnantWater)
 							{
 								wallsOnBothSides = false;
@@ -218,12 +192,11 @@ namespace AdventOfCode
 					}
 					else
 					{
-						total++;
-						SetWaterAt(grid, currentX, currentY);
+						SetAt(grid, currentX, currentY, GridContents.NonstagnantWater);
 
 						if (GetAt(grid, currentX, currentY + 1) == GridContents.None)
 						{
-							total += CalculateWaterFrom(grid, currentX, currentY);
+							FillWithWaterFrom(grid, currentX, currentY);
 							if (GetAt(grid, currentX, currentY + 1) == GridContents.NonstagnantWater)
 							{
 								wallsOnBothSides = false;
@@ -237,35 +210,23 @@ namespace AdventOfCode
 				{
 					for (currentX = leftWall + 1; currentX < rightWall; currentX++)
 					{
-						SetStagnantAt(grid, currentX, currentY);
+						SetAt(grid, currentX, currentY, GridContents.StagnantWater);
 					}
 				}
 			}
-
-			for(int count = currentY; count > y; count--)
-			{
-				SetWaterAt(grid, x, count);
-				total++;
-			}
-
-			return total;
 		}
 
 		public static int findFloor(GridContents[,] grid, int x, int top)
 		{
-			int y = top + 1;
-			
-			while (GetAt(grid, x, y) == GridContents.None)
+			for (int y = top + 1; y + 1 < grid.GetLength(0); y++)
 			{
-				y++;
-
-				if (y == grid.GetLength(0))
+				if (GetAt(grid, x, y + 1) != GridContents.None)
 				{
-					return y - 1;
+					return y;
 				}
 			}
 
-			return y - 1;
+			return grid.GetLength(0) - 1;
 
 		}
 		public static void PartTwo()
@@ -308,13 +269,10 @@ namespace AdventOfCode
 
 			foreach (Tuple<int, int> item in clay)
 			{
-				SetClayAt(grid, item.Item1, item.Item2, minX);
+				SetAt(grid, item.Item1 - minX, item.Item2, GridContents.Clay);
 			}
 
-
-			//PrintGrid(grid);
-
-			CalculateWaterFrom(grid, 500 - minX, minY - 1);
+			FillWithWaterFrom(grid, 500 - minX, minY - 1);
 
 			int total = 0;
 			for (int currentY = 0; currentY < grid.GetLength(0); currentY++)
@@ -337,7 +295,6 @@ namespace AdventOfCode
 			}
 
 			Console.WriteLine("{0} squares of water are stagnant", total);
-			PrintGrid(grid);
 		}
 	}
 }
