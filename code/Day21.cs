@@ -112,34 +112,18 @@ namespace AdventOfCode
                 return command;
             }));
 
-            int minInstructionsExecuted = int.MaxValue;
-            int minValue = 0;
+            List<int> registers = new List<int>(new int[6]);
 
-            for (int i = 0; i < 14226518; i++)
+            while(true)
             {
-                int instructionsExecuted = 0;
-                List<int> registers = new List<int>(new int[6]);
+                if (registers[1] == 28)
+                    break;
 
-                registers[0] = i;
-
-                while (registers[instructionRegister] >= 0 && registers[instructionRegister] < program.Count())
-                {
-                    EvaluateCommand(registers, program[registers[instructionRegister]]);
-                    registers[instructionRegister]++;
-                    instructionsExecuted++;
-
-                    if (instructionsExecuted >= minInstructionsExecuted)
-                        break;
-                }
-
-                if (instructionsExecuted < minInstructionsExecuted)
-                {
-                    minInstructionsExecuted = instructionsExecuted;
-                    minValue = i;
-                }
+                EvaluateCommand(registers, program[registers[instructionRegister]]);
+                registers[instructionRegister]++;
             }
 
-            Console.WriteLine(minValue);
+            Console.WriteLine(registers[5]);
         }
 
         private static OpCode StringToOpcode(string input)
@@ -226,7 +210,6 @@ namespace AdventOfCode
 
                 if (values.ContainsKey(regFive))
                 {
-
                     Console.WriteLine("Loop Found at iteration {0} with iteration {1}", i, values[regFive]);
                     break;
                 }
