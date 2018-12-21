@@ -168,61 +168,47 @@ namespace AdventOfCode
         }
         public static void PartTwo()
         {
-            Dictionary<int, int> values = new Dictionary<int, int>();
+            List<string> lines = Utils.GetLinesFromFile("input/Day21Input.txt");
+
+            string firstLine = lines[0];
+
+            int instructionRegister = Convert.ToInt32(firstLine.Substring(4));
             
-            int regTwo = 0;
-            int regThree = 0;
-            int regFive = 13431073;
-            int regFour = 65536;
-            int i = 0;
-            while (true)
+            List<List<int>> program = new List<List<int>>(lines.Skip(1).Select(x => 
             {
-                
-                regThree = regFour & 255;
+                string[] splitLine = x.Split(" ");
+                OpCode opCode = StringToOpcode(splitLine[0]);
+                List<int> command = new List<int>{(int)opCode, Convert.ToInt32(splitLine[1]), Convert.ToInt32(splitLine[2]), Convert.ToInt32(splitLine[3])};
 
-                regFive += regThree;
+                return command;
+            }));
 
-                regFive &= 16777215;
-                regFive *= 65899;
-                regFive &= 16777215;
+            List<int> registers = new List<int>(new int[6]);
 
-                while (256 <= regFour)
+            HashSet<int> values = new HashSet<int>();
+            int previousValue = 0;
+            int iterations = 0;
+            while(true)
+            {
+                if (registers[1] == 28)
                 {
-                    regThree = -1;
-                    
-                    do
+                    if (values.Contains(registers[5]))
                     {
-                        regThree++;
-                        regTwo = regThree + 1;
-                        regTwo *= 256;
-                    } while (regTwo <= regFour);
-                    
-                    regFour = regThree;
-
-                    regThree = regFour & 255;
-
-                    regFive += regThree;
-
-                    regFive &= 16777215;
-                    regFive *= 65899;
-                    regFive &= 16777215;
-                }
-
-                if (values.ContainsKey(regFive))
-                {
-                    Console.WriteLine("Loop Found at iteration {0} with iteration {1}", i, values[regFive]);
-                    break;
-                }
-                else
-                {
-                    if (i == 10691)
-                    {
-                        Console.WriteLine(regFive);
+                        Console.WriteLine(previousValue);
+                        return;
                     }
-                    values.Add(regFive, i++);
-                    regFour = regFive | 65536;
-                    regFive = 13431073;
+                    else
+                    {
+                        if (iterations++ % 100 == 0)
+                            Console.WriteLine("{0}: {1}", iterations, registers[5]);
+
+                        values.Add(registers[5]);
+                        previousValue = registers[5];
+                    }
                 }
+
+                EvaluateCommand(registers, program[registers[instructionRegister]]);
+                registers[instructionRegister]++;
             }
         }
     }
