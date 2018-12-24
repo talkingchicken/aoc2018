@@ -102,6 +102,11 @@ namespace AdventOfCode
 		}
 		public static void PartOne()
 		{
+			Console.WriteLine(Math.Abs(SimulateFight(0)));
+		}
+
+		private static int SimulateFight(int boost)
+		{
 			List<string> lines = Utils.GetLinesFromFile("input/Day24Input.txt");
 
 			bool addToImmuneSystem = true;
@@ -158,94 +163,13 @@ namespace AdventOfCode
 					}
 				}
 
-				int attack = Convert.ToInt32(splitLine[currentIndex + 5]);
+				int attack = Convert.ToInt32(splitLine[currentIndex + 5]) + (addToImmuneSystem ? boost : 0);
 				string damageType = splitLine[currentIndex + 6];
 				int initiative = Convert.ToInt32(splitLine[currentIndex + 10]);
 
 				unitGroups.Add(new UnitGroup(addToImmuneSystem, units, health, attack, initiative, damageType, weaknesses, immunities));
 			}
-			
-			int immuneUnits = unitGroups.Where(x => x.immuneSystem && x.units != 0).Count();
-			int infectionUnits = unitGroups.Where(x => !x.immuneSystem && x.units != 0).Count();
 
-			while (immuneUnits > 0 && infectionUnits > 0)
-			{
-				unitGroups.Sort();
-				HashSet<int> chosenTargets = new HashSet<int>();
-				List<Target> targets = new List<Target>();
-				for (int i = 0; i < unitGroups.Count; i++)
-				{
-					if (unitGroups[i].units <= 0)
-						continue;
-
-					int maxDamage = -1;
-					int index = -1;
-
-					for (int j = 0; j < unitGroups.Count; j++)
-					{
-						if (chosenTargets.Contains(j))
-							continue;
-
-						if (unitGroups[j].units <= 0)
-							continue;
-
-						if (i == j)
-						{
-							continue;
-						}
-
-						if (unitGroups[i].immuneSystem == unitGroups[j].immuneSystem)
-						{
-							continue;
-						}
-
-						int potentialDamage = unitGroups[i].CalcDamage(unitGroups[j]);
-
-						if (potentialDamage > maxDamage)
-						{
-							maxDamage = potentialDamage;
-							index = j;
-						}
-						else if (potentialDamage == maxDamage)
-						{
-							if (unitGroups[j].EffectivePower() > unitGroups[index].EffectivePower())
-							{
-								index = j;
-							}
-							else if (unitGroups[j].EffectivePower() == unitGroups[index].EffectivePower() && unitGroups[j].initiative > unitGroups[index].initiative)
-							{
-								index = j;
-							}
-						}
-					}
-
-					if (index != -1 && maxDamage > 0)
-					{
-						targets.Add(new Target(i, index, unitGroups[i].initiative));
-						chosenTargets.Add(index);
-					}
-				}
-
-				targets.Sort();
-
-				foreach (Target target in targets)
-				{
-					int damage = unitGroups[target.source].CalcDamage(unitGroups[target.destination]);
-
-					unitGroups[target.destination].units -= damage / unitGroups[target.destination].health;
-				}
-
-				immuneUnits = unitGroups.Where(x => x.immuneSystem && x.units > 0).Count();
-				infectionUnits = unitGroups.Where(x => !x.immuneSystem && x.units > 0).Count();
-			}
-
-			int totalRemainingUnits = unitGroups.Where(x => x.units > 0).Select(y => y.units).Sum();
-
-			Console.WriteLine(totalRemainingUnits);
-		}
-
-		private static int SimulateFight(List<UnitGroup> unitGroups)
-		{
 			int immuneUnits = unitGroups.Where(x => x.immuneSystem && x.units != 0).Count();
 			int infectionUnits = unitGroups.Where(x => !x.immuneSystem && x.units != 0).Count();
 
@@ -321,16 +245,18 @@ namespace AdventOfCode
 				}
 
 				if (totalUnitsLost == 0)
-					return -1;
+					return 0;
 
 				immuneUnits = unitGroups.Where(x => x.immuneSystem && x.units > 0).Count();
 				infectionUnits = unitGroups.Where(x => !x.immuneSystem && x.units > 0).Count();
 			}
 
-			if (infectionUnits > 0)
-				return -1;
+			int totalUnitsRemaining = unitGroups.Where(x => x.units > 0).Select(y => y.units).Sum();
 
-			return unitGroups.Where(x => x.units > 0).Select(y => y.units).Sum();
+			if (infectionUnits > 0)
+				totalUnitsRemaining *= -1;
+
+			return totalUnitsRemaining;
 		}
 
 		public static void PartTwo()
@@ -339,73 +265,8 @@ namespace AdventOfCode
 			int result;
 			do
 			{
-				boost++;
-			
-				List<string> lines = Utils.GetLinesFromFile("input/Day24Input.txt");
-
-				bool addToImmuneSystem = true;
-
-				List<UnitGroup> unitGroups = new List<UnitGroup>();
-
-				foreach (string line in lines)
-				{
-					if (line.StartsWith("I"))
-					{
-						continue;
-					}
-					else if (line.Length == 0)
-					{
-						addToImmuneSystem = false;
-						continue;
-					}
-
-					string[] splitLine = line.Split(" ");
-
-					int units = Convert.ToInt32(splitLine[0]);
-					int health = Convert.ToInt32(splitLine[4]);
-
-					List<string> weaknesses = new List<string>();
-					List<string> immunities = new List<string>();
-
-					int currentIndex = 7;
-
-					if (splitLine[7].StartsWith("("))
-					{
-						splitLine[7] = splitLine[7].Substring(1);
-						while (true)
-						{
-							bool setWeaknesses = splitLine[currentIndex] == "weak";
-							if (splitLine[currentIndex] == "weak" || splitLine[currentIndex] == "immune")
-							{
-								currentIndex += 1;
-								do
-								{
-									currentIndex++;
-									if (setWeaknesses)
-										weaknesses.Add(splitLine[currentIndex].Substring(0, splitLine[currentIndex].Length - 1));
-									else
-										immunities.Add(splitLine[currentIndex].Substring(0, splitLine[currentIndex].Length - 1));
-			
-								} while (!splitLine[currentIndex].EndsWith(";") && !splitLine[currentIndex].EndsWith(")"));
-
-								currentIndex++;
-							}
-							else
-							{
-								break;
-							}
-						}
-					}
-
-					int attack = Convert.ToInt32(splitLine[currentIndex + 5]) + (addToImmuneSystem ? boost : 0);
-					string damageType = splitLine[currentIndex + 6];
-					int initiative = Convert.ToInt32(splitLine[currentIndex + 10]);
-
-					unitGroups.Add(new UnitGroup(addToImmuneSystem, units, health, attack, initiative, damageType, weaknesses, immunities));
-				}
-
-				result = SimulateFight(unitGroups);
-			} while (result == -1);
+				result = SimulateFight(boost++);
+			} while (result <= 0);
 
 			Console.WriteLine(result);
 		}
